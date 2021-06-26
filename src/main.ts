@@ -4,9 +4,11 @@ import {
     commandHelp, commandQuote, commandStart,
     commandSubscribe, commandUnsubscribe
 } from "./controller";
+import express from 'express';
 
 config();
 const bot = new Telegraf(process.env.BOT_TOKEN ?? "");
+const app = express();
 
 bot.command("/start", commandStart);
 bot.command("/help", commandHelp);
@@ -23,7 +25,15 @@ bot.on('text', async ctx => {
 bot.launch();
 console.log("telegram AnimeBot is running...");
 
+app.all('/', async (req,res) => {
+    res.send("this is a telegram bot.");
+});
+
+app.listen(process.env.PORT, () => {
+    console.log(`app is running on port: ${process.env.PORT}`);
+});
+
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
 
-export { bot };
+export { bot,app };
